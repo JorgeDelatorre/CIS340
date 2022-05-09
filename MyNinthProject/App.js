@@ -3,12 +3,42 @@
 import React, { Component } from "react";
 
 import { StyleSheet, Text, View, TextInput, Image} from "react-native";
+import Forecast from "./Forecast";
 
+import Forevasr from "./Forecast";
+import OpenWeatherMap from "./open_weather_map";
 
 class WeatherForecast extends Component {
   
-  
+  constructor (props){
+    super(props);
+    this.state = { zip: "", forcast: null};
+
+  }
+
+  _hndleTextChange = event => {
+    let zip = event.nativeEvent.Text;
+    OpenWeatherMap.fetchForecast(zip).then(forcast => {
+      this.setState({ forcast: forcast})
+    });
+
+  };
+
   render() {
+
+    let content = null;
+    if (this.state.forcast !== null){
+
+      content = (
+        <Forecast
+        main={this.state.forcast.main}
+        description={this.state.forcast.description}
+        temp={this.state.forcast.temp}
+        />
+
+      );
+
+    }
     
     return (
       <View style={styles.container}>
@@ -25,14 +55,12 @@ class WeatherForecast extends Component {
               <View style={styles.zipContainer}>
                 <TextInput
                   style={[styles.zipCode, styles.mainText]}
-                  onSubmitEditing={() => {
-                    alert('Weather Forcast!');
-                  }}
+                  onSubmitEditing={this._hndleTextChange}
                   underlineColorAndroid="transparent"
                 />
               </View>
             </View>
-          
+            {content}
           </View>
         
       </View>
